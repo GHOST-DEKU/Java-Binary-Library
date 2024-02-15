@@ -1,8 +1,9 @@
 package classes;
 
 // Class to represent a binary number
+
 class myBinaryNumber {
-    private int[] binaryNumber; // Array to store binary number
+    int[] binaryNumber; // Array to store binary number
     
     // Constructor to initialize binary number of size n with all bits as 0
     myBinaryNumber(int n) {
@@ -15,8 +16,13 @@ class myBinaryNumber {
     // Constructor to initialize binary number from a string representation
     myBinaryNumber(String S) {
         binaryNumber = new int[S.length()];
-        for (int i = 0; i < S.length(); i++) {
-            binaryNumber[i] = Integer.parseInt(Character.toString(S.charAt(i)));
+        if (S.length() == 0) {
+            binaryNumber[0] = 0;
+        }
+        else {
+            for (int i = 0; i < S.length(); i++) {
+                binaryNumber[i] = Integer.parseInt(Character.toString(S.charAt(i)));
+            }
         }
     }
 
@@ -74,4 +80,59 @@ class myBinaryNumber {
         System.out.println(binaryToDecimal(binaryNumber));
     }
     
+}
+
+// Class to operate on binary numbers
+abstract class binaryOperations {
+    abstract public myBinaryNumber binaryMultiplication(myBinaryNumber a, myBinaryNumber b);
+    public myBinaryNumber binaryAddition(myBinaryNumber a, myBinaryNumber b) {
+        myBinaryNumber result;
+        int i;
+        if (a.getSize() > b.getSize()) {
+            result = new myBinaryNumber(a.getSize());
+            i = a.getSize() - 1;
+        }
+        else if (a.getSize() == b.getSize()) {
+            result = new myBinaryNumber(a.getSize() + 1);
+            i = a.getSize() - 1;
+        }
+        else {
+            result = new myBinaryNumber(b.getSize());
+            i = b.getSize() - 1;
+        }
+        int carry = 0;
+        int sum = 0;
+        while (i >= 0) {
+            int A = a.getBit(i), B = b.getBit(i);
+            sum = A + B + carry;
+            switch (sum) {
+                case 0:
+                    result.setBit(i, 0);
+                    carry = 0;
+                    break;
+                case 1:
+                    result.setBit(i, 1);
+                    carry = 0;
+                    break;
+                case 2:
+                    result.setBit(i, 0);
+                    carry = 1;
+                    break;
+                case 3:
+                    result.setBit(i, 1);
+                    carry = 1;
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+            i--;
+        }
+        if (carry == 1) {
+            for (i = 0; i < result.getSize(); i++) {
+                result.setBit(i+1, result.getBit(i));
+            }
+            result.setBit(0, carry);
+        }
+        return result;
+    }
 }
