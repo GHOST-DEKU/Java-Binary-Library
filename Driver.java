@@ -1,5 +1,5 @@
 package classes;
-import classes.task1.myBinaryNumber;
+import classes.*;
 public class Driver {
     public static void main(String[] args) {
         

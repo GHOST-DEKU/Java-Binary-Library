@@ -1,7 +1,7 @@
-package classes.task1;
+package classes;
 
 // Class to represent a binary number
-public class myBinaryNumber {
+class myBinaryNumber {
     private int[] binaryNumber; // Array to store binary number
     
     // Constructor to initialize binary number of size n with all bits as 0
