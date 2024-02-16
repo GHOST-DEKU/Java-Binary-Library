@@ -44,13 +44,10 @@ class myBinaryNumber {
 
     // Method to set the bit at position p to b (0 or 1)
     public void setBit(int p, int b) {
-        if ((b == 0 || b == 1) && p <= getSize()) {
-            if (p == getSize()) {
-                binaryNumber = new int[getSize()+1];
-            }
+        if ((b == 0 || b == 1) && p < getSize()) {
             binaryNumber[p] = b;
         }
-        else if (p > getSize()) {
+        else if (p >= getSize()) {
             System.err.println(p+" is out of the bound");
         }
         else {
@@ -85,25 +82,29 @@ class myBinaryNumber {
 // Class to operate on binary numbers
 abstract class binaryOperations {
     abstract public myBinaryNumber binaryMultiplication(myBinaryNumber a, myBinaryNumber b);
+    // Method to perform binary addition operation
     public myBinaryNumber binaryAddition(myBinaryNumber a, myBinaryNumber b) {
-        myBinaryNumber result;
-        int i;
-        if (a.getSize() > b.getSize()) {
-            result = new myBinaryNumber(a.getSize());
-            i = a.getSize() - 1;
-        }
-        else if (a.getSize() == b.getSize()) {
-            result = new myBinaryNumber(a.getSize() + 1);
-            i = a.getSize() - 1;
-        }
-        else {
-            result = new myBinaryNumber(b.getSize());
-            i = b.getSize() - 1;
-        }
+        // Determine the size for the result binary number. It should be max(a.size, b.size) + 1 to accommodate carry.
+        int maxSize = Math.max(a.getSize(), b.getSize());
+        myBinaryNumber result = new myBinaryNumber(maxSize + 1);
         int carry = 0;
         int sum = 0;
+        int i = maxSize - 1;
         while (i >= 0) {
-            int A = a.getBit(i), B = b.getBit(i);
+            int A;
+            int B;
+            if (a.getSize() > b.getSize()) {
+                A = a.getBit(i);
+                B = 0;
+            }
+            else if (a.getSize() < b.getSize()) {
+                A = 0;
+                B = b.getBit(i);
+            }
+            else {
+                A = a.getBit(i);
+                B = b.getBit(i);
+            }
             sum = A + B + carry;
             switch (sum) {
                 case 0:
@@ -128,11 +129,59 @@ abstract class binaryOperations {
             i--;
         }
         if (carry == 1) {
-            for (i = 0; i < result.getSize(); i++) {
-                result.setBit(i+1, result.getBit(i));
+            for (i = result.getSize() - 1; i > 0; i--) {
+                result.setBit(i, result.getBit(i-1));
             }
             result.setBit(0, carry);
         }
         return result;
+    }
+}
+
+class binaryMultiplicationNaive extends binaryOperations {
+    public myBinaryNumber binaryMultiplication(myBinaryNumber a, myBinaryNumber b) {
+        myBinaryNumber result = new myBinaryNumber(a.getSize() + b.getSize());
+        int i = a.getSize() - 1;
+        int j = b.getSize() - 1;
+        myBinaryNumber temp;
+        do { 
+            if (a.getSize() > b.getSize()) {
+                temp = new myBinaryNumber(a.getSize());
+            }
+            else if (a.getSize() == b.getSize()) {
+                temp = new myBinaryNumber(a.getSize() + 1);
+            }
+            else {
+                temp = new myBinaryNumber(b.getSize());
+            }
+
+            while (i >= 0) { 
+                if (a.getBit(i) == 1 && b.getBit(i) == 1) {
+                    temp.setBit(i, 1);
+                }
+                else {
+                    temp.setBit(i, 0);
+                }
+                i--;
+            }
+
+            result = binaryAddition(result, temp);
+
+            j--;
+        } while (j >= 0);
+        return result;
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        myBinaryNumber a = new myBinaryNumber("1010");
+        a.printDecimalNumber();
+        myBinaryNumber b = new myBinaryNumber("1101");
+        b.printDecimalNumber();
+        binaryOperations binaryMultiplicationObj = new binaryMultiplicationNaive();
+        myBinaryNumber result = binaryMultiplicationObj.binaryMultiplication(a, b);
+        result.printNumber();
+        result.printDecimalNumber();
     }
 }
