@@ -1,7 +1,6 @@
 package classes;
 
 // Class to represent a binary number
-
 class myBinaryNumber {
     int[] binaryNumber; // Array to store binary number
     
@@ -81,18 +80,29 @@ class myBinaryNumber {
 
 // Class to operate on binary numbers
 abstract class binaryOperations {
+    // Abstract method for binary multiplication to be implemented by subclasses
     abstract public myBinaryNumber binaryMultiplication(myBinaryNumber a, myBinaryNumber b);
+    
     // Method to perform binary addition operation
     public myBinaryNumber binaryAddition(myBinaryNumber a, myBinaryNumber b) {
         // Determine the size for the result binary number. It should be max(a.size, b.size) + 1 to accommodate carry.
         int maxSize = Math.max(a.getSize(), b.getSize());
         myBinaryNumber result = new myBinaryNumber(maxSize + 1);
-        int carry = 0;
-        int sum = 0;
-        int i = maxSize - 1;
+
+        // Adjusting the size of binary numbers to match before addition
+        if (a.getSize() > b.getSize()) {
+            b = shiftDigits.shiftRight(a.getSize() - b.getSize(), b);
+        } else if (a.getSize() < b.getSize()) {
+            a = shiftDigits.shiftRight(b.getSize() - a.getSize(), a);
+        }
+
+        int carry = 0; // To hold the carry value
+        int sum = 0; // To hold the sum of bits
+        int i = maxSize - 1; // Index for iteration
         while (i >= 0) {
             int A;
             int B;
+            // Adjusting bit values based on size differences
             if (a.getSize() > b.getSize()) {
                 A = a.getBit(i);
                 B = 0;
@@ -105,22 +115,23 @@ abstract class binaryOperations {
                 A = a.getBit(i);
                 B = b.getBit(i);
             }
-            sum = A + B + carry;
+            sum = A + B + carry; // Calculating sum of bits and carry
+            // Setting result bit and carry based on sum value
             switch (sum) {
                 case 0:
-                    result.setBit(i, 0);
+                    result.setBit(i+1, 0);
                     carry = 0;
                     break;
                 case 1:
-                    result.setBit(i, 1);
+                    result.setBit(i+1, 1);
                     carry = 0;
                     break;
                 case 2:
-                    result.setBit(i, 0);
+                    result.setBit(i+1, 0);
                     carry = 1;
                     break;
                 case 3:
-                    result.setBit(i, 1);
+                    result.setBit(i+1, 1);
                     carry = 1;
                     break;
                 default:
@@ -128,60 +139,81 @@ abstract class binaryOperations {
             }
             i--;
         }
-        if (carry == 1) {
-            for (i = result.getSize() - 1; i > 0; i--) {
-                result.setBit(i, result.getBit(i-1));
-            }
-            result.setBit(0, carry);
-        }
+        result.setBit(0, carry); // Setting the final carry bit
         return result;
     }
 }
 
 class binaryMultiplicationNaive extends binaryOperations {
+    // Method to perform naive binary multiplication
     public myBinaryNumber binaryMultiplication(myBinaryNumber a, myBinaryNumber b) {
-        myBinaryNumber result = new myBinaryNumber(a.getSize() + b.getSize());
-        int i = a.getSize() - 1;
-        int j = b.getSize() - 1;
-        myBinaryNumber temp;
+        myBinaryNumber result = new myBinaryNumber(a.getSize() + b.getSize()); // Resultant binary number
+        int j = b.getSize() - 1; // Index for iterating through second binary number
+        myBinaryNumber temp; // Temporary binary number for intermediate results
         do { 
-            if (a.getSize() > b.getSize()) {
-                temp = new myBinaryNumber(a.getSize());
-            }
-            else if (a.getSize() == b.getSize()) {
-                temp = new myBinaryNumber(a.getSize() + 1);
-            }
-            else {
-                temp = new myBinaryNumber(b.getSize());
-            }
+            int i = a.getSize() - 1; // Index for iterating through first binary number
+            temp = new myBinaryNumber(a.getSize() + 1); // Temporary binary number for current iteration
 
             while (i >= 0) { 
-                if (a.getBit(i) == 1 && b.getBit(i) == 1) {
-                    temp.setBit(i, 1);
+                // Setting bit in temporary binary number based on multiplication result
+                if (a.getBit(i) == 1 && b.getBit(j) == 1) {
+                    temp.setBit(i+1, 1);
                 }
-                else {
-                    temp.setBit(i, 0);
+                else if (a.getBit(i) == 0 || b.getBit(j) == 1){
+                    temp.setBit(i+1, 0);
                 }
                 i--;
             }
 
-            result = binaryAddition(result, temp);
+            temp = shiftDigits.shiftLeft(temp, b.getSize() - j -1); // Shifting temporary binary number
 
+            result = binaryAddition(result, temp); // Adding temporary result to final result
             j--;
         } while (j >= 0);
         return result;
     }
 }
 
-class Main {
-    public static void main(String[] args) {
-        myBinaryNumber a = new myBinaryNumber("1010");
-        a.printDecimalNumber();
-        myBinaryNumber b = new myBinaryNumber("1101");
-        b.printDecimalNumber();
-        binaryOperations binaryMultiplicationObj = new binaryMultiplicationNaive();
-        myBinaryNumber result = binaryMultiplicationObj.binaryMultiplication(a, b);
-        result.printNumber();
-        result.printDecimalNumber();
+class shiftDigits {
+    // Method to shift binary number to the right
+    public static myBinaryNumber shiftRight(int shifts, myBinaryNumber num) {
+        myBinaryNumber result = new myBinaryNumber(num.getSize() + shifts); // Resultant binary number after shift
+        for (int i = 0; i < num.getSize(); i++) {
+            result.setBit(i + shifts, num.getBit(i)); // Shifting bits
+        }
+        for (int j = 0; j < shifts; j++) {
+            result.setBit(j, 0); // Setting initial bits to 0
+        }
+        return result;
+    }
+    // Method to shift binary number to the left
+    public static myBinaryNumber shiftLeft(myBinaryNumber num, int shifts) {
+        myBinaryNumber result = new myBinaryNumber(num.getSize() + shifts); // Resultant binary number after shift
+        for (int i = 0; i < num.getSize(); i++) {
+            result.setBit(i, num.getBit(i)); // Shifting bits
+        }
+        for (int j = num.getSize(); j < num.getSize() + shifts; j++) {
+            result.setBit(j, 0); // Setting trailing bits to 0
+        }
+        return result;
     }
 }
+
+// class Main {
+//     public static void main(String[] args) {
+//         // myBinaryNumber a = new myBinaryNumber("010");
+//         myBinaryNumber a = new myBinaryNumber("01");
+//         a.printDecimalNumber();
+//         a.printNumber();
+//         // myBinaryNumber b = new myBinaryNumber("011");
+//         myBinaryNumber b = new myBinaryNumber("10");
+//         b.printDecimalNumber();
+//         b.printNumber();
+//         binaryOperations binaryMultiplicationObj = new binaryMultiplicationNaive();
+//         // myBinaryNumber result = binaryMultiplicationObj.binaryAddition(a, b);
+//         myBinaryNumber result = binaryMultiplicationObj.binaryMultiplication(a, b);
+//         result.printNumber();
+//         result.printDecimalNumber();
+//     }
+// }
+
