@@ -202,7 +202,7 @@ class shiftDigits {
 // class Main {
 //     public static void main(String[] args) {
 //         // myBinaryNumber a = new myBinaryNumber("010");
-//         myBinaryNumber a = new myBinaryNumber("01");
+//         myBinaryNumber a = new myBinaryNumber("011");
 //         a.printDecimalNumber();
 //         a.printNumber();
 //         // myBinaryNumber b = new myBinaryNumber("011");
@@ -210,8 +210,8 @@ class shiftDigits {
 //         b.printDecimalNumber();
 //         b.printNumber();
 //         binaryOperations binaryMultiplicationObj = new binaryMultiplicationNaive();
-//         // myBinaryNumber result = binaryMultiplicationObj.binaryAddition(a, b);
-//         myBinaryNumber result = binaryMultiplicationObj.binaryMultiplication(a, b);
+//         myBinaryNumber result = binaryMultiplicationObj.binaryAddition(a, b);
+//         // myBinaryNumber result = binaryMultiplicationObj.binaryMultiplication(a, b);
 //         result.printNumber();
 //         result.printDecimalNumber();
 //     }
