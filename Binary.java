@@ -1,6 +1,7 @@
 package classes;
 
 // Class to represent a binary number
+
 class myBinaryNumber {
     int[] binaryNumber; // Array to store binary number
     
@@ -199,21 +200,32 @@ class shiftDigits {
     }
 }
 
-// class Main {
-//     public static void main(String[] args) {
-//         // myBinaryNumber a = new myBinaryNumber("010");
-//         myBinaryNumber a = new myBinaryNumber("011");
-//         a.printDecimalNumber();
-//         a.printNumber();
-//         // myBinaryNumber b = new myBinaryNumber("011");
-//         myBinaryNumber b = new myBinaryNumber("10");
-//         b.printDecimalNumber();
-//         b.printNumber();
-//         binaryOperations binaryMultiplicationObj = new binaryMultiplicationNaive();
-//         myBinaryNumber result = binaryMultiplicationObj.binaryAddition(a, b);
-//         // myBinaryNumber result = binaryMultiplicationObj.binaryMultiplication(a, b);
-//         result.printNumber();
-//         result.printDecimalNumber();
-//     }
-// }
+class BinaryUtils {
+    // Converts a myBinaryNumber instance to its String representation
+    static String binaryNumberToString(myBinaryNumber binary) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < binary.getSize(); i++) {
+            sb.append(binary.getBit(i));
+        }
+        return sb.toString();
+    }
+    // Truncate the initial zeroes
+    static myBinaryNumber truncateBinaryNumber(myBinaryNumber binary) {
+        int firstNonZero = 0;
+        while (firstNonZero < binary.getSize() && binary.getBit(firstNonZero) == 0) {
+            firstNonZero++;
+        }
+        if (firstNonZero == binary.getSize()) {
+            return new myBinaryNumber(1); // Return a binary number with a single 0 if all bits are 0
+        }
+        int newSize = binary.getSize() - firstNonZero;
+        myBinaryNumber truncatedBinary = new myBinaryNumber(newSize);
+        for (int i = 0; i < newSize; i++) {
+            truncatedBinary.setBit(i, binary.getBit(i + firstNonZero));
+        }
+        return truncatedBinary;
+    }
+}
+
+
 
