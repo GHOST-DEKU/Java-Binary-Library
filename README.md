@@ -1,3 +1,10 @@
+# Binary File
+In this java file, there are classes that handle binary no.s
+You can use this file to do operations(Multiplication & Addition) on 2 unsigned binary no.s
+
+# Driver File
+In this java file, there is a driver class which uses the classes of binary java file & access the 2 binary no.s from a text file and write the result in another text file
+
 ## IOException
 
 In the provided Java code snippet from Driver.java, an IOException can be thrown due to several reasons related to file operations being performed within the try block. Here are the primary reasons:
