@@ -169,12 +169,7 @@ class binaryMultiplicationNaive extends binaryOperations {
 
             while (i >= 0) { 
                 // Setting bit in temporary binary number based on multiplication result
-                if (a.getBit(i) == 1 && b.getBit(j) == 1) {
-                    temp.setBit(i+1, 1);
-                }
-                else if (a.getBit(i) == 0 || b.getBit(j) == 1){
-                    temp.setBit(i+1, 0);
-                }
+                temp.setBit(i+1, a.getBit(i) * b.getBit(j));
                 i--;
             }
 
