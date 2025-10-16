@@ -120,19 +120,8 @@ abstract class binaryOperations {
         while (i >= 0) {
             int A;
             int B;
-            // Adjusting bit values based on size differences
-            if (a.getSize() > b.getSize()) {
-                A = a.getBit(i);
-                B = 0;
-            }
-            else if (a.getSize() < b.getSize()) {
-                A = 0;
-                B = b.getBit(i);
-            }
-            else {
-                A = a.getBit(i);
-                B = b.getBit(i);
-            }
+            A = a.getBit(i);
+            B = b.getBit(i);
             sum = A + B + carry; // Calculating sum of bits and carry
             // Setting result bit and carry based on sum value
             switch (sum) {
